@@ -14,5 +14,11 @@ exports.seed = (connection, Promise) => {
     })
     .then(() => {
       return connection.insert(usersData).into('users');
+    })
+    .then(() => {
+      return connection.insert(articlesData).into('articles');
+    })
+    .then(() => {
+      return connection.insert(commentsData).into('comments');
     });
 };

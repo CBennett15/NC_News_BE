@@ -1,3 +1,5 @@
 node_modules
 knexfile.js
 .DS_Store
+db/query.sql
+db/output.txt
