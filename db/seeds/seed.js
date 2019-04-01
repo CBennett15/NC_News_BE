@@ -1,10 +1,15 @@
-// const {  } = require('../data');
+const {
+  articlesData,
+  usersData,
+  topicsData,
+  commentsData,
+} = require('../data');
 
-exports.seed = (knex, Promise) => {
-  return knex.migrate
+exports.seed = (connection, Promise) => {
+  return connection.migrate
     .rollback()
-    .then(() => knex.migrate.latest())
+    .then(() => connection.migrate.latest())
     .then(() => {
-      // insert data
+      return connection.insert(topicsData).into('topics');
     });
 };
