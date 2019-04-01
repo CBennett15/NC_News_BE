@@ -11,5 +11,8 @@ exports.seed = (connection, Promise) => {
     .then(() => connection.migrate.latest())
     .then(() => {
       return connection.insert(topicsData).into('topics');
+    })
+    .then(() => {
+      return connection.insert(usersData).into('users');
     });
 };
