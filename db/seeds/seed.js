@@ -4,7 +4,7 @@ const {
   topicsData,
   commentsData,
 } = require('../data');
-const { convertDate, createRef } = require('../utils');
+const { convertDate, createRef, formatData } = require('../utils');
 
 exports.seed = (connection, Promise) => {
   return connection.migrate
@@ -14,7 +14,10 @@ exports.seed = (connection, Promise) => {
       return connection.insert(topicsData).into('topics');
     })
     .then(() => {
-      return connection.insert(usersData).into('users');
+      return connection
+        .insert(usersData)
+        .into('users')
+        .returning('*');
     })
     .then(() => {
       return connection
@@ -25,6 +28,7 @@ exports.seed = (connection, Promise) => {
     .then((articleRows) => {
       const articleRef = createRef(articleRows);
       const formattedData = formatData(commentsData, articleRef);
-      return connection.insert(formattedData).into('comments');
+      console.log(formattedData);
+      return connection.insert(convertDate(formattedData)).into('comments');
     });
 };

@@ -18,3 +18,13 @@ exports.createRef = (arr, arg1 = 'title', arg2 = 'article_id') => {
   }, {});
   return refObject;
 };
+exports.formatData = (data, refObj) => {
+  // I don't know how to make this more generic - could do the same function but this isn't very DRY
+  if (!data.length) return [];
+  const formattedData = data.map((obj) => {
+    const { belongs_to, ...restOfObj } = obj;
+    return { ...restOfObj, article_id: refObj[belongs_to] };
+  });
+
+  return formattedData;
+};
