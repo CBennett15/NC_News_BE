@@ -1,15 +1,12 @@
-exports.convertDate = (timestamp) => {
-  const formattedDate = new Date(timestamp);
-  console.log(formattedDate);
-  return formattedDate;
-};
-
-exports.formatData = (arr, func) => {
+exports.convertDate = (arr) => {
   if (!arr.length) return [];
 
-  const formattedData = arr.map((obj) => {
-    return obj.key;
+  const formattedDate = arr.map((obj) => {
+    const timestamp = obj.created_at;
+    const convertTime = new Date(timestamp);
+    const { created_at, ...restOfObj } = obj;
+    return { ...restOfObj, created_at: convertTime };
   });
 
-  return formattedData;
+  return formattedDate;
 };

@@ -2,19 +2,13 @@ const { convertDate, formatData } = require('../db/utils');
 const { expect } = require('chai');
 
 describe('convertDate', () => {
-  it('it returns an instance of a Date Object', () => {
-    expect(convertDate(1468087638932)).to.be.an.instanceOf(Date);
-  });
-});
-describe('formatData', () => {
-  it('it returns an empty array when passed an empty array', () => {
+  it('it returns an empty array when input is an empty array', () => {
     const input = [];
-    const func = convertDate();
-    const actual = formatData(input, func);
+    const actual = convertDate(input);
     const expected = [];
     expect(actual).to.eql(expected);
   });
-  it('returns an array with an object with the correct format for an input of an array with one object', () => {
+  it('it returns an instance of a Date Object', () => {
     const input = [
       {
         title: 'Living in the shadow of a great man',
@@ -25,9 +19,7 @@ describe('formatData', () => {
         votes: 100,
       },
     ];
-    const func = convertDate();
-    const actual = formatData(input, func);
-    const expected = [];
-    expect(actual).to.eql(expected);
+    const actual = convertDate(input);
+    expect(actual[0].created_at).to.be.an.instanceOf(Date);
   });
 });
