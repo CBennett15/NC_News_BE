@@ -1,5 +1,4 @@
 exports.up = function(connection, Promise) {
-  console.log('creating table..');
   return connection.schema.createTable('articles', (articlesTable) => {
     articlesTable.increments('article_id').primary();
     articlesTable.string('title');
@@ -20,6 +19,5 @@ exports.up = function(connection, Promise) {
 };
 
 exports.down = function(connection, Promise) {
-  console.log('dropping table...');
   return connection.schema.dropTable('articles');
 };
