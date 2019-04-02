@@ -1,4 +1,4 @@
-const { convertDate, createRef, formatData } = require('../db/utils');
+const { convertDate, createRef, formatComments } = require('../db/utils');
 const { expect } = require('chai');
 
 describe('convertDate', () => {
@@ -86,10 +86,10 @@ describe('createRef', () => {
     expect(actual).to.eql(expected);
   });
 });
-describe('formatData', () => {
+describe('formatComments', () => {
   it('returns an empty array when passed an empty array', () => {
     const input = [];
-    const actual = formatData(input, {});
+    const actual = formatComments(input, {});
     const expected = [];
     expect(actual).to.eql(expected);
   });
@@ -105,12 +105,33 @@ describe('formatData', () => {
         created_by: 'butter_bridge',
       },
     ];
-    const actual = formatData(data, articlesRef);
+    const actual = formatComments(data, articlesRef);
     const expected = [
       {
         body: 'This is a bad article name',
         article_id: 1,
+        author: 'butter_bridge',
+      },
+    ];
+    expect(actual).to.eql(expected);
+  });
+  it('it returns an array with an object with the created_by key renamed to author', () => {
+    const articlesRef = {
+      A: 1,
+    };
+    const data = [
+      {
+        body: 'This is a bad article name',
+        belongs_to: 'A',
         created_by: 'butter_bridge',
+      },
+    ];
+    const actual = formatComments(data, articlesRef);
+    const expected = [
+      {
+        body: 'This is a bad article name',
+        article_id: 1,
+        author: 'butter_bridge',
       },
     ];
     expect(actual).to.eql(expected);

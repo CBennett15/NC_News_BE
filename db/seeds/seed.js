@@ -4,7 +4,7 @@ const {
   topicsData,
   commentsData,
 } = require('../data');
-const { convertDate, createRef, formatData } = require('../utils');
+const { convertDate, createRef, formatComments } = require('../utils');
 
 exports.seed = (connection, Promise) => {
   return connection.migrate
@@ -27,8 +27,7 @@ exports.seed = (connection, Promise) => {
     })
     .then((articleRows) => {
       const articleRef = createRef(articleRows);
-      const formattedData = formatData(commentsData, articleRef);
-      console.log(formattedData);
+      const formattedData = formatComments(commentsData, articleRef);
       return connection.insert(convertDate(formattedData)).into('comments');
     });
 };
