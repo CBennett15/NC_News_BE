@@ -40,11 +40,12 @@ exports.updateArticle = (req) => {
     .where('article_id', '=', id)
     .increment('votes', inc_votes)
     .returning('*');
+};
 
-  //   Request body accepts
-  //   an object in the form { inc_votes: newVote }
-  //   newVote will indicate how much the votes property in the database should be updated by
-  //   e.g.
-  // { inc_votes: 1 } would increment the current article's vote property by 1
-  //   { inc_votes: -100 } would decrement the current article's vote property by 100
+exports.deleteArticle = ({ articles_id }) => {
+  return connection
+    .select('*')
+    .from('articles')
+    .where('article_id', '=', articles_id)
+    .del();
 };

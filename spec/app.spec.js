@@ -122,6 +122,9 @@ describe.only('/', () => {
               expect(res.body.article.votes).to.equal(101);
             });
         });
+        it('DELETE status: 204', () => {
+          return request.delete('/api/articles/1').expect(204);
+        });
       });
     });
   });
