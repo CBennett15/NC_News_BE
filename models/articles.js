@@ -1,12 +1,13 @@
 const connection = require('../db/connection');
 
-exports.getArticles = ({ username, topic }) => {
+exports.getArticles = ({ username, topic, sort_by, order_by }) => {
   return connection
     .select('articles.*', 'comments.article_id')
     .from('articles')
     .count({ comment_count: 'comments.article_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('comments.article_id', 'articles.article_id')
+    .orderBy(sort_by || 'created_at', order_by || 'desc')
     .modify(function(queryBuilder) {
       if (username) {
         queryBuilder.where('articles.author', username);
@@ -22,9 +23,12 @@ exports.getArticles = ({ username, topic }) => {
 
 exports.getArticlesById = ({ articles_id }) => {
   return connection
-    .select('*')
+    .select('articles.*', 'comments.article_id')
     .from('articles')
-    .where('article_id', '=', articles_id);
+    .where('articles.article_id', '=', articles_id)
+    .count({ comment_count: 'comments.article_id' })
+    .leftJoin('comments', 'articles.article_id', 'comments.article_id')
+    .groupBy('comments.article_id', 'articles.article_id');
 };
 
 exports.updateArticle = ({ articles_id }) => {

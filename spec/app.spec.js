@@ -57,7 +57,6 @@ describe.only('/', () => {
           .expect(200)
           .then((res) => {
             expect(res.body.articles[0]).to.include.keys('comment_count');
-            expect(res.body.articles[0].comment_count).to.equal('13');
           });
       });
       it('GET status: 200, user can filter by username and return all articles associated with that username', () => {
@@ -76,6 +75,25 @@ describe.only('/', () => {
             expect(res.body.articles.length).to.equal(1);
           });
       });
+      it('GET status: 200, user can sort the articles by a specific column with default set to Date', () => {
+        return request
+          .get('/api/articles?sort_by=topic')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles[0].topic).to.equal('mitch');
+          });
+      });
+      it('GET status: 200, user can order results by ascending or descending, with defualt set to desc', () => {
+        return request
+          .get('/api/articles?order_by=asc')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles[0].title).to.equal('Moustache');
+            expect(
+              res.body.articles[res.body.articles.length - 1].title,
+            ).to.equal('Living in the shadow of a great man');
+          });
+      });
       describe('/articles/:article_id', () => {
         it('GET status: 200, it responds with an array of one article object based on article ID', () => {
           return request
@@ -86,8 +104,17 @@ describe.only('/', () => {
               expect(res.body.articlebyID[0].author).to.equal('butter_bridge');
             });
         });
-        xit('PATCH status: 201, it responds with an array of one article object based on article ID with modifications', () => {
-          return request.patch('/api/articles/1').expect(201);
+        it('GET status: 200, each single article has a comment count property', () => {
+          return request
+            .get('/api/articles/1')
+            .expect(200)
+            .then((res) => {
+              expect(res.body.articlebyID[0]).to.include.keys('comment_count');
+              expect(res.body.articlebyID[0].comment_count).to.equal('13');
+            });
+        });
+        it('PATCH status: 200, it responds with an array of one article object based on article ID with modifications', () => {
+          return request.patch('/api/articles/1').expect(200);
         });
       });
     });
