@@ -11,12 +11,12 @@ exports.sendArticles = (req, res, next) => {
 };
 
 exports.sendArticlesById = (req, res, next) => {
-  getArticlesById(req.params).then((articlebyID) => {
-    res.status(200).send({ articlebyID });
+  getArticlesById(req.params).then(([article]) => {
+    res.status(200).send({ article });
   });
 };
 exports.updateArticlesById = (req, res, next) => {
-  updateArticle(req.params).then((articlebyID) => {
-    res.status(201).send({ articlebyID });
+  updateArticle(req).then(([article]) => {
+    res.status(201).send({ article });
   });
 };

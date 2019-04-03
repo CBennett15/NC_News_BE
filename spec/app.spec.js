@@ -100,8 +100,8 @@ describe.only('/', () => {
             .get('/api/articles/1')
             .expect(200)
             .then((res) => {
-              expect(res.body.articlebyID).to.be.an('array');
-              expect(res.body.articlebyID[0].author).to.equal('butter_bridge');
+              expect(res.body.article).to.be.an('object');
+              expect(res.body.article.author).to.equal('butter_bridge');
             });
         });
         it('GET status: 200, each single article has a comment count property', () => {
@@ -109,12 +109,18 @@ describe.only('/', () => {
             .get('/api/articles/1')
             .expect(200)
             .then((res) => {
-              expect(res.body.articlebyID[0]).to.include.keys('comment_count');
-              expect(res.body.articlebyID[0].comment_count).to.equal('13');
+              expect(res.body.article).to.include.keys('comment_count');
+              expect(res.body.article.comment_count).to.equal('13');
             });
         });
-        it('PATCH status: 200, it responds with an array of one article object based on article ID with modifications', () => {
-          return request.patch('/api/articles/1').expect(200);
+        it('PATCH status: 201, it responds with an array of one article object based on article ID with modifications', () => {
+          return request
+            .patch('/api/articles/1')
+            .send({ inc_votes: 1 })
+            .expect(201)
+            .then((res) => {
+              expect(res.body.article.votes).to.equal(101);
+            });
         });
       });
     });

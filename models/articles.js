@@ -31,7 +31,16 @@ exports.getArticlesById = ({ articles_id }) => {
     .groupBy('comments.article_id', 'articles.article_id');
 };
 
-exports.updateArticle = ({ articles_id }) => {
+exports.updateArticle = (req) => {
+  const id = req.params.articles_id;
+  const inc_votes = req.body.inc_votes;
+  return connection
+    .select('*')
+    .from('articles')
+    .where('article_id', '=', id)
+    .increment('votes', inc_votes)
+    .returning('*');
+
   //   Request body accepts
   //   an object in the form { inc_votes: newVote }
   //   newVote will indicate how much the votes property in the database should be updated by
