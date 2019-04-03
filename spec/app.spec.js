@@ -51,9 +51,43 @@ describe.only('/', () => {
             );
           });
       });
+      it('GET status: 200, each article has a comment count property', () => {
+        return request
+          .get('/api/articles')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles[0]).to.include.keys('comment_count');
+            expect(res.body.articles[0].comment_count).to.equal('13');
+          });
+      });
+      it('GET status: 200, user can filter by username and return all articles associated with that username', () => {
+        return request
+          .get('/api/articles?username=butter_bridge')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles.length).to.equal(3);
+          });
+      });
+      it('GET status: 200, user can filter by topic and return all articles associated with that topic', () => {
+        return request
+          .get('/api/articles?topic=cats')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles.length).to.equal(1);
+          });
+      });
       describe('/articles/:article_id', () => {
         it('GET status: 200, it responds with an array of one article object based on article ID', () => {
-          return request.get('/api/articles/1').expect(200);
+          return request
+            .get('/api/articles/1')
+            .expect(200)
+            .then((res) => {
+              expect(res.body.articlebyID).to.be.an('array');
+              expect(res.body.articlebyID[0].author).to.equal('butter_bridge');
+            });
+        });
+        xit('PATCH status: 201, it responds with an array of one article object based on article ID with modifications', () => {
+          return request.patch('/api/articles/1').expect(201);
         });
       });
     });
