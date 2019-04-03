@@ -10,3 +10,11 @@ exports.updateComment = (req) => {
     .increment('votes', inc_votes)
     .returning('*');
 };
+
+exports.deleteComment = ({ comments_id }) => {
+  return connection
+    .select('*')
+    .from('comments')
+    .where('comment_id', '=', comments_id)
+    .del();
+};

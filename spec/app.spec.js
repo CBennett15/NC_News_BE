@@ -191,6 +191,25 @@ describe.only('/', () => {
               expect(res.body.comment.votes).to.equal(17);
             });
         });
+        it('DELETE status: 204', () => {
+          return request.delete('/api/comments/1').expect(204);
+        });
+      });
+    });
+    describe('/users', () => {
+      describe('/users/:username', () => {
+        it('GET status: 200, it responds with one user object based on username', () => {
+          return request
+            .get('/api/users/:butter_bridge')
+            .expect(200)
+            .then((res) => {
+              expect(res.body.user).to.contain.keys(
+                'username',
+                'avatar_url',
+                'name',
+              );
+            });
+        });
       });
     });
   });
