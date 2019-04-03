@@ -197,10 +197,25 @@ describe.only('/', () => {
       });
     });
     describe('/users', () => {
+      describe('/api/users', () => {
+        it('GET status: 200, responds with an array of user objects', () => {
+          return request
+            .get('/api/users')
+            .expect(200)
+            .then((res) => {
+              expect(res.body.users).to.be.an('array');
+              expect(res.body.users[0]).to.contain.keys(
+                'username',
+                'avatar_url',
+                'name',
+              );
+            });
+        });
+      });
       describe('/users/:username', () => {
         it('GET status: 200, it responds with one user object based on username', () => {
           return request
-            .get('/api/users/:butter_bridge')
+            .get('/api/users/rogersop')
             .expect(200)
             .then((res) => {
               expect(res.body.user).to.contain.keys(
@@ -208,6 +223,7 @@ describe.only('/', () => {
                 'avatar_url',
                 'name',
               );
+              expect(res.body.user.name).to.equal('paul');
             });
         });
       });
