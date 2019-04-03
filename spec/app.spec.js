@@ -158,6 +158,38 @@ describe.only('/', () => {
                 expect(res.body.comments[0].author).to.equal('butter_bridge');
               });
           });
+          it('POST status 201, responds with a comment object', () => {
+            return request
+              .post('/api/articles/1/comments')
+              .send({
+                username: 'butter_bridge',
+                body: 'This is a cool comment',
+              })
+              .expect(201)
+              .then((res) => {
+                expect(res.body.comment).to.contain.keys(
+                  'comment_id',
+                  'author',
+                  'article_id',
+                  'votes',
+                  'created_at',
+                  'body',
+                );
+              });
+          });
+        });
+      });
+    });
+    describe('/comments', () => {
+      describe('/comments/:comment_id', () => {
+        it('PATCH status: 201, it responds with one comment object based on comment ID with modifications', () => {
+          return request
+            .patch('/api/comments/1')
+            .send({ inc_votes: 1 })
+            .expect(201)
+            .then((res) => {
+              expect(res.body.comment.votes).to.equal(17);
+            });
         });
       });
     });

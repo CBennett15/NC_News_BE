@@ -61,4 +61,16 @@ exports.getCommentsByArticle = (req) => {
     .orderBy(sort_by || 'created_at', order_by || 'desc');
 };
 
-// SELECT comments.*, COUNT(comments.article_id) AS comment_count FROM comments LEFT JOIN articles ON comments.article_id = articles.article_id GROUP BY articles.article_id;
+exports.addComment = (req) => {
+  const body = req.body;
+  const id = req.params.articles_id;
+  return connection
+    .insert({
+      author: body.username,
+      article_id: id,
+      created_at: new Date(),
+      body: body.body,
+    })
+    .into('comments')
+    .returning('*');
+};

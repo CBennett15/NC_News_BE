@@ -4,6 +4,7 @@ const {
   updateArticle,
   deleteArticle,
   getCommentsByArticle,
+  addComment,
 } = require('../models/articles');
 
 exports.sendArticles = (req, res, next) => {
@@ -30,5 +31,10 @@ exports.deleteArticlesByID = (req, res, next) => {
 exports.sendCommentsByArticle = (req, res, next) => {
   getCommentsByArticle(req).then((comments) => {
     res.status(200).send({ comments });
+  });
+};
+exports.addCommentToArticle = (req, res, next) => {
+  addComment(req).then(([comment]) => {
+    res.status(201).send({ comment });
   });
 };
