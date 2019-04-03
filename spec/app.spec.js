@@ -95,7 +95,7 @@ describe.only('/', () => {
           });
       });
       describe('/articles/:article_id', () => {
-        it('GET status: 200, it responds with an array of one article object based on article ID', () => {
+        it('GET status: 200, it responds with one article object based on article ID', () => {
           return request
             .get('/api/articles/1')
             .expect(200)
@@ -113,7 +113,7 @@ describe.only('/', () => {
               expect(res.body.article.comment_count).to.equal('13');
             });
         });
-        it('PATCH status: 201, it responds with an array of one article object based on article ID with modifications', () => {
+        it('PATCH status: 201, it responds with one article object based on article ID with modifications', () => {
           return request
             .patch('/api/articles/1')
             .send({ inc_votes: 1 })
@@ -124,6 +124,40 @@ describe.only('/', () => {
         });
         it('DELETE status: 204', () => {
           return request.delete('/api/articles/1').expect(204);
+        });
+        describe('/articles/:article_id/comments', () => {
+          it('GET status: 200, it responds with an array of comments based on one article object', () => {
+            return request
+              .get('/api/articles/1/comments')
+              .expect(200)
+              .then((res) => {
+                expect(res.body.comments).to.be.an('array');
+                expect(res.body.comments[0]).to.contain.keys(
+                  'comment_id',
+                  'author',
+                  'article_id',
+                  'votes',
+                  'created_at',
+                  'body',
+                );
+              });
+          });
+          it('GET status: 200, user can sort the comments by a specific column, default is created_at', () => {
+            return request
+              .get('/api/articles/1/comments?sort_by=author')
+              .expect(200)
+              .then((res) => {
+                expect(res.body.comments[0].author).to.equal('icellusedkars');
+              });
+          });
+          it('GET status: 200, user can order comments by ascending or descending, default is desc', () => {
+            return request
+              .get('/api/articles/1/comments?order_by=desc')
+              .expect(200)
+              .then((res) => {
+                expect(res.body.comments[0].author).to.equal('butter_bridge');
+              });
+          });
         });
       });
     });

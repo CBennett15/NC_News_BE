@@ -3,6 +3,7 @@ const {
   getArticlesById,
   updateArticle,
   deleteArticle,
+  getCommentsByArticle,
 } = require('../models/articles');
 
 exports.sendArticles = (req, res, next) => {
@@ -24,5 +25,10 @@ exports.updateArticlesById = (req, res, next) => {
 exports.deleteArticlesByID = (req, res, next) => {
   deleteArticle(req.params).then(() => {
     res.sendStatus(204);
+  });
+};
+exports.sendCommentsByArticle = (req, res, next) => {
+  getCommentsByArticle(req).then((comments) => {
+    res.status(200).send({ comments });
   });
 };

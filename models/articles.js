@@ -49,3 +49,16 @@ exports.deleteArticle = ({ articles_id }) => {
     .where('article_id', '=', articles_id)
     .del();
 };
+exports.getCommentsByArticle = (req) => {
+  const id = req.params.articles_id;
+  const sort_by = req.query.sort_by;
+  const order_by = req.query.order_by;
+  return connection
+    .select('comments.*', 'articles.article_id')
+    .from('comments')
+    .where('articles.article_id', '=', id)
+    .leftJoin('articles', 'comments.article_id', 'articles.article_id')
+    .orderBy(sort_by || 'created_at', order_by || 'desc');
+};
+
+// SELECT comments.*, COUNT(comments.article_id) AS comment_count FROM comments LEFT JOIN articles ON comments.article_id = articles.article_id GROUP BY articles.article_id;
