@@ -22,14 +22,30 @@ describe.only('/', () => {
           expect(body.ok).to.equal(true);
         });
     });
+    it('GET status 404 for path that does not exist, responds with Route Not Found', () => {
+      return request
+        .get('/api/non-existent-route')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Route Not Found');
+        });
+    });
     describe('/topics', () => {
       it('GET status: 200, it responds with an array of topic objects each topic having the right properties', () => {
         return request
           .get('/api/topics')
           .expect(200)
-          .then((res) => {
-            expect(res.body.topics).to.be.an('array');
-            expect(res.body.topics[0]).to.contain.keys('description', 'slug');
+          .then(({ body }) => {
+            expect(body.topics).to.be.an('array');
+            expect(body.topics[0]).to.contain.keys('description', 'slug');
+          });
+      });
+      it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
+        return request
+          .post('/api/topics')
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Method Not Allowed');
           });
       });
     });
@@ -38,9 +54,9 @@ describe.only('/', () => {
         return request
           .get('/api/articles')
           .expect(200)
-          .then((res) => {
-            expect(res.body.articles).to.be.an('array');
-            expect(res.body.articles[0]).to.contain.keys(
+          .then(({ body }) => {
+            expect(body.articles).to.be.an('array');
+            expect(body.articles[0]).to.contain.keys(
               'article_id',
               'title',
               'body',
@@ -55,43 +71,51 @@ describe.only('/', () => {
         return request
           .get('/api/articles')
           .expect(200)
-          .then((res) => {
-            expect(res.body.articles[0]).to.include.keys('comment_count');
+          .then(({ body }) => {
+            expect(body.articles[0]).to.include.keys('comment_count');
           });
       });
       it('GET status: 200, user can filter by username and return all articles associated with that username', () => {
         return request
           .get('/api/articles?username=butter_bridge')
           .expect(200)
-          .then((res) => {
-            expect(res.body.articles.length).to.equal(3);
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(3);
           });
       });
       it('GET status: 200, user can filter by topic and return all articles associated with that topic', () => {
         return request
           .get('/api/articles?topic=cats')
           .expect(200)
-          .then((res) => {
-            expect(res.body.articles.length).to.equal(1);
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(1);
           });
       });
       it('GET status: 200, user can sort the articles by a specific column with default set to Date', () => {
         return request
           .get('/api/articles?sort_by=topic')
           .expect(200)
-          .then((res) => {
-            expect(res.body.articles[0].topic).to.equal('mitch');
+          .then(({ body }) => {
+            expect(body.articles[0].topic).to.equal('mitch');
           });
       });
       it('GET status: 200, user can order results by ascending or descending, with defualt set to desc', () => {
         return request
           .get('/api/articles?order_by=asc')
           .expect(200)
-          .then((res) => {
-            expect(res.body.articles[0].title).to.equal('Moustache');
-            expect(
-              res.body.articles[res.body.articles.length - 1].title,
-            ).to.equal('Living in the shadow of a great man');
+          .then(({ body }) => {
+            expect(body.articles[0].title).to.equal('Moustache');
+            expect(body.articles[body.articles.length - 1].title).to.equal(
+              'Living in the shadow of a great man',
+            );
+          });
+      });
+      it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
+        return request
+          .put('/api/articles')
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Method Not Allowed');
           });
       });
       describe('/articles/:article_id', () => {
@@ -99,18 +123,18 @@ describe.only('/', () => {
           return request
             .get('/api/articles/1')
             .expect(200)
-            .then((res) => {
-              expect(res.body.article).to.be.an('object');
-              expect(res.body.article.author).to.equal('butter_bridge');
+            .then(({ body }) => {
+              expect(body.article).to.be.an('object');
+              expect(body.article.author).to.equal('butter_bridge');
             });
         });
         it('GET status: 200, each single article has a comment count property', () => {
           return request
             .get('/api/articles/1')
             .expect(200)
-            .then((res) => {
-              expect(res.body.article).to.include.keys('comment_count');
-              expect(res.body.article.comment_count).to.equal('13');
+            .then(({ body }) => {
+              expect(body.article).to.include.keys('comment_count');
+              expect(body.article.comment_count).to.equal('13');
             });
         });
         it('PATCH status: 201, it responds with one article object based on article ID with modifications', () => {
@@ -118,8 +142,8 @@ describe.only('/', () => {
             .patch('/api/articles/1')
             .send({ inc_votes: 1 })
             .expect(201)
-            .then((res) => {
-              expect(res.body.article.votes).to.equal(101);
+            .then(({ body }) => {
+              expect(body.article.votes).to.equal(101);
             });
         });
         it('DELETE status: 204', () => {
@@ -130,9 +154,9 @@ describe.only('/', () => {
             return request
               .get('/api/articles/1/comments')
               .expect(200)
-              .then((res) => {
-                expect(res.body.comments).to.be.an('array');
-                expect(res.body.comments[0]).to.contain.keys(
+              .then(({ body }) => {
+                expect(body.comments).to.be.an('array');
+                expect(body.comments[0]).to.contain.keys(
                   'comment_id',
                   'author',
                   'article_id',
@@ -146,16 +170,16 @@ describe.only('/', () => {
             return request
               .get('/api/articles/1/comments?sort_by=author')
               .expect(200)
-              .then((res) => {
-                expect(res.body.comments[0].author).to.equal('icellusedkars');
+              .then(({ body }) => {
+                expect(body.comments[0].author).to.equal('icellusedkars');
               });
           });
           it('GET status: 200, user can order comments by ascending or descending, default is desc', () => {
             return request
               .get('/api/articles/1/comments?order_by=desc')
               .expect(200)
-              .then((res) => {
-                expect(res.body.comments[0].author).to.equal('butter_bridge');
+              .then(({ body }) => {
+                expect(body.comments[0].author).to.equal('butter_bridge');
               });
           });
           it('POST status 201, responds with a comment object', () => {
@@ -166,8 +190,8 @@ describe.only('/', () => {
                 body: 'This is a cool comment',
               })
               .expect(201)
-              .then((res) => {
-                expect(res.body.comment).to.contain.keys(
+              .then(({ body }) => {
+                expect(body.comment).to.contain.keys(
                   'comment_id',
                   'author',
                   'article_id',
@@ -187,12 +211,20 @@ describe.only('/', () => {
             .patch('/api/comments/1')
             .send({ inc_votes: 1 })
             .expect(201)
-            .then((res) => {
-              expect(res.body.comment.votes).to.equal(17);
+            .then(({ body }) => {
+              expect(body.comment.votes).to.equal(17);
             });
         });
         it('DELETE status: 204', () => {
           return request.delete('/api/comments/1').expect(204);
+        });
+        it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
+          return request
+            .put('/api/comments/1')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Method Not Allowed');
+            });
         });
       });
     });
@@ -202,13 +234,21 @@ describe.only('/', () => {
           return request
             .get('/api/users')
             .expect(200)
-            .then((res) => {
-              expect(res.body.users).to.be.an('array');
-              expect(res.body.users[0]).to.contain.keys(
+            .then(({ body }) => {
+              expect(body.users).to.be.an('array');
+              expect(body.users[0]).to.contain.keys(
                 'username',
                 'avatar_url',
                 'name',
               );
+            });
+        });
+        it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
+          return request
+            .put('/api/users')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Method Not Allowed');
             });
         });
       });
@@ -217,13 +257,13 @@ describe.only('/', () => {
           return request
             .get('/api/users/rogersop')
             .expect(200)
-            .then((res) => {
-              expect(res.body.user).to.contain.keys(
+            .then(({ body }) => {
+              expect(body.user).to.contain.keys(
                 'username',
                 'avatar_url',
                 'name',
               );
-              expect(res.body.user.name).to.equal('paul');
+              expect(body.user.name).to.equal('paul');
             });
         });
       });

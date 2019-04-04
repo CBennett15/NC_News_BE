@@ -10,7 +10,10 @@ apiRouter
   .get((req, res) => res.send({ ok: true }))
   .all(methodNotAllowed);
 
-apiRouter.route('/topics').get(sendTopics);
+apiRouter
+  .route('/topics')
+  .get(sendTopics)
+  .all(methodNotAllowed);
 
 apiRouter.use('/articles', articlesRouter);
 

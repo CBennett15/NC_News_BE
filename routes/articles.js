@@ -7,8 +7,12 @@ const {
   sendCommentsByArticle,
   addCommentToArticle,
 } = require('../controllers/articles');
+const { methodNotAllowed } = require('../errors');
 
-articlesRouter.route('/').get(sendArticles);
+articlesRouter
+  .route('/')
+  .get(sendArticles)
+  .all(methodNotAllowed);
 
 articlesRouter
   .route('/:articles_id')
