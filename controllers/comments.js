@@ -21,7 +21,10 @@ exports.updateCommentsById = (req, res, next) => {
 };
 exports.deleteCommentsById = (req, res, next) => {
   deleteComment(req.params)
-    .then(() => {
+    .then((numOfDeletions) => {
+      if (!numOfDeletions) {
+        return Promise.reject({ status: 404, msg: 'ID Not Found' });
+      }
       res.sendStatus(204);
     })
     .catch(next);

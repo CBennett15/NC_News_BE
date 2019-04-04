@@ -133,13 +133,12 @@ describe('/', () => {
             expect(body.msg).to.equal('Bad Request');
           });
       });
-      it('NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author or topic', () => {
+      xit('NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author or topic', () => {
         return request
-          .get('/api/articles?username=sam')
+          .get('/api/articles?author=mr_potato_head')
           .expect(404)
           .then(({ body }) => {
-            console.log(body);
-            expect(body.msg).to.equal('Route Not Found');
+            expect(body.msg).to.equal('Author Not Found');
           });
       });
       it('GET status: 200, it responds with an empty array when user filters by author/topic that does exist but has no articles associated with it ', () => {
@@ -181,6 +180,31 @@ describe('/', () => {
         it('DELETE status: 204', () => {
           return request.delete('/api/articles/1').expect(204);
         });
+        it('DELETE status: 404, responds with a message of ID Not Found when input an id that is not there', () => {
+          return request
+            .delete('/api/articles/999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('ID Not Found');
+            });
+        });
+        it('BAD QUERIES status: 400, responds with message Bad Request when there is an incorrect format article ID', () => {
+          return request
+            .get('/api/articles/cats')
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Bad Request');
+            });
+        });
+        it("NOT FOUND status: 404, responds with message Route Not Found when there a valid id but it doesn't exist", () => {
+          return request
+            .get('/api/articles/99999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Article Not Found');
+            });
+        });
+
         describe('/articles/:article_id/comments', () => {
           it('GET status: 200, it responds with an array of comments based on one article object', () => {
             return request
@@ -272,6 +296,14 @@ describe('/', () => {
         });
         it('DELETE status: 204', () => {
           return request.delete('/api/comments/1').expect(204);
+        });
+        it('DELETE status: 404, responds with a message of ID Not Found when input an id that is not there', () => {
+          return request
+            .delete('/api/comments/999')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('ID Not Found');
+            });
         });
         it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
           return request

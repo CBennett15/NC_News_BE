@@ -12,9 +12,15 @@ exports.handle500 = (err, req, res, next) => {
 };
 
 exports.badRequest = (err, req, res, next) => {
-  const badCode = '42703';
-  if (badCode === err.code) {
+  const badCode = ['42703', '22P02'];
+  if (badCode.includes(err.code)) {
     res.status(400).send({ msg: 'Bad Request' });
+  } else next(err);
+};
+
+exports.customErrors = (err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ msg: err.msg });
   } else next(err);
 };
 
