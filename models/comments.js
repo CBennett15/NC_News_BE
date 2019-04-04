@@ -1,5 +1,12 @@
 const connection = require('../db/connection');
 
+exports.getComments = () => {
+  return connection
+    .select('*')
+    .from('comments')
+    .returning('*');
+};
+
 exports.updateComment = (req) => {
   const id = req.params.comments_id;
   const inc_votes = req.body.inc_votes;

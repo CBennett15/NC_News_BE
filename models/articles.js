@@ -1,6 +1,6 @@
 const connection = require('../db/connection');
 
-exports.getArticles = ({ username, topic, sort_by, order_by }) => {
+exports.getArticles = ({ author, topic, sort_by, order_by }) => {
   return connection
     .select('articles.*', 'comments.article_id')
     .from('articles')
@@ -9,8 +9,8 @@ exports.getArticles = ({ username, topic, sort_by, order_by }) => {
     .groupBy('comments.article_id', 'articles.article_id')
     .orderBy(sort_by || 'created_at', order_by || 'desc')
     .modify(function(queryBuilder) {
-      if (username) {
-        queryBuilder.where('articles.author', username);
+      if (author) {
+        queryBuilder.where('articles.author', author);
       }
     })
     .modify(function(queryBuilder) {

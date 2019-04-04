@@ -8,7 +8,7 @@ const connection = require('../db/connection');
 
 const request = supertest(app);
 
-describe.only('/', () => {
+describe('/', () => {
   beforeEach(() => {
     return connection.seed.run();
   });
@@ -38,6 +38,8 @@ describe.only('/', () => {
           .then(({ body }) => {
             expect(body.topics).to.be.an('array');
             expect(body.topics[0]).to.contain.keys('description', 'slug');
+            expect(body.topics[0].slug).to.equal('mitch');
+            expect(body.topics.length).to.equal(2);
           });
       });
       it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
@@ -65,6 +67,9 @@ describe.only('/', () => {
               'author',
               'created_at',
             );
+            expect(body.articles[0].title).to.equal(
+              'Living in the shadow of a great man',
+            );
           });
       });
       it('GET status: 200, each article has a comment count property', () => {
@@ -75,12 +80,13 @@ describe.only('/', () => {
             expect(body.articles[0]).to.include.keys('comment_count');
           });
       });
-      it('GET status: 200, user can filter by username and return all articles associated with that username', () => {
+      it('GET status: 200, user can filter by author and return all articles associated with that username', () => {
         return request
-          .get('/api/articles?username=butter_bridge')
+          .get('/api/articles?author=butter_bridge')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles.length).to.equal(3);
+            expect(body.articles[0].author).to.equal('butter_bridge');
           });
       });
       it('GET status: 200, user can filter by topic and return all articles associated with that topic', () => {
@@ -89,6 +95,7 @@ describe.only('/', () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.articles.length).to.equal(1);
+            expect(body.articles[0].topic).to.equal('cats');
           });
       });
       it('GET status: 200, user can sort the articles by a specific column with default set to Date', () => {
@@ -118,6 +125,31 @@ describe.only('/', () => {
             expect(body.msg).to.equal('Method Not Allowed');
           });
       });
+      it('BAD QUERIES status: 400, responds with message Bad Request when user sorts by non-existent column', () => {
+        return request
+          .get('/api/articles?sort_by=cats')
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Bad Request');
+          });
+      });
+      it('NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author or topic', () => {
+        return request
+          .get('/api/articles?username=sam')
+          .expect(404)
+          .then(({ body }) => {
+            console.log(body);
+            expect(body.msg).to.equal('Route Not Found');
+          });
+      });
+      it('GET status: 200, it responds with an empty array when user filters by author/topic that does exist but has no articles associated with it ', () => {
+        return request
+          .get('/api/articles?author=wulfwyn')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(0);
+          });
+      });
       describe('/articles/:article_id', () => {
         it('GET status: 200, it responds with one article object based on article ID', () => {
           return request
@@ -137,11 +169,11 @@ describe.only('/', () => {
               expect(body.article.comment_count).to.equal('13');
             });
         });
-        it('PATCH status: 201, it responds with one article object based on article ID with modifications', () => {
+        it('PATCH status: 200, it responds with one article object based on article ID with modifications', () => {
           return request
             .patch('/api/articles/1')
             .send({ inc_votes: 1 })
-            .expect(201)
+            .expect(200)
             .then(({ body }) => {
               expect(body.article.votes).to.equal(101);
             });
@@ -164,6 +196,7 @@ describe.only('/', () => {
                   'created_at',
                   'body',
                 );
+                expect(body.comments[0].author).to.equal('butter_bridge');
               });
           });
           it('GET status: 200, user can sort the comments by a specific column, default is created_at', () => {
@@ -172,6 +205,7 @@ describe.only('/', () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments[0].author).to.equal('icellusedkars');
+                expect(body.comments.length).to.equal(13);
               });
           });
           it('GET status: 200, user can order comments by ascending or descending, default is desc', () => {
@@ -180,6 +214,9 @@ describe.only('/', () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments[0].author).to.equal('butter_bridge');
+                expect(body.comments[body.comments.length - 1].votes).to.equal(
+                  16,
+                );
               });
           });
           it('POST status 201, responds with a comment object', () => {
@@ -199,18 +236,36 @@ describe.only('/', () => {
                   'created_at',
                   'body',
                 );
+                expect(body.comment.author).to.equal('butter_bridge');
               });
           });
         });
       });
     });
     describe('/comments', () => {
+      it('GET status 200, responds with an array of comment objects', () => {
+        return request
+          .get('/api/comments')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).to.be.an('array');
+            expect(body.comments[0]).to.contain.keys(
+              'comment_id',
+              'author',
+              'article_id',
+              'votes',
+              'created_at',
+              'body',
+            );
+            expect(body.comments[0].comment_id).to.equal(1);
+          });
+      });
       describe('/comments/:comment_id', () => {
-        it('PATCH status: 201, it responds with one comment object based on comment ID with modifications', () => {
+        it('PATCH status: 200, it responds with one comment object based on comment ID with modifications', () => {
           return request
             .patch('/api/comments/1')
             .send({ inc_votes: 1 })
-            .expect(201)
+            .expect(200)
             .then(({ body }) => {
               expect(body.comment.votes).to.equal(17);
             });
@@ -241,6 +296,7 @@ describe.only('/', () => {
                 'avatar_url',
                 'name',
               );
+              expect(body.users[0].name).to.equal('jonny');
             });
         });
         it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
