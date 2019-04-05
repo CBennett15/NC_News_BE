@@ -24,9 +24,6 @@ exports.customErrors = (err, req, res, next) => {
   } else next(err);
 };
 
-// app.use((err, req, res, next) => {
-//   const badRequestCodes = ['22P02', ...];
-//   if (badRequestCodes.includes(err.code)) {
-//     res.status(400).send({ msg: err.message || 'Bad Request' });
-//   } else next(err);
-// });
+exports.handle422 = (err, req, res, next) => {
+  res.status(422).send({ msg: 'Unprocessable Entity - already exists' });
+};

@@ -67,6 +67,15 @@ describe.only('/', () => {
             expect(body.topic.slug).to.equal('board_games');
           });
       });
+      it('POST status: 422, topic to add already exists in the database', () => {
+        return request
+          .post('/api/topics')
+          .send({ slug: 'cats' })
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Unprocessable Entity - already exists');
+          });
+      });
     });
     describe('/articles', () => {
       it('GET status: 200, it responds with an array of article objects, each topic having the right properties', () => {

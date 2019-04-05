@@ -5,6 +5,7 @@ const {
   handle500,
   badRequest,
   customErrors,
+  handle422,
 } = require('./errors');
 
 const app = express();
@@ -18,6 +19,8 @@ app.all('/*', routeNotFound);
 app.use(badRequest);
 
 app.use(customErrors);
+
+app.use(handle422);
 
 app.use(handle500);
 
