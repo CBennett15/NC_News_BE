@@ -6,11 +6,11 @@ const {
   getCommentsByArticle,
   addComment,
 } = require('../models/articles');
-const { getUsersByUsername } = require('../models/users');
+const { getUsers } = require('../models/users');
 
 exports.sendArticles = (req, res, next) => {
   // const username = req.query.author;
-  // Promise.all([getArticles(req.query), getUsersByUsername({ username })])
+  // Promise.all([getArticles(req.query), getUsers({ username })])
   //   .then(([articles, users]) => {
   //     console.log(users);
   //     if (!users.length) {

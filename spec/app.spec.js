@@ -8,7 +8,7 @@ const connection = require('../db/connection');
 
 const request = supertest(app);
 
-describe('/', () => {
+describe.only('/', () => {
   beforeEach(() => {
     return connection.seed.run();
   });
@@ -171,10 +171,37 @@ describe('/', () => {
         it('PATCH status: 200, it responds with one article object based on article ID with modifications', () => {
           return request
             .patch('/api/articles/1')
-            .send({ inc_votes: 1 })
+            .send({ inc_votes: 10 })
             .expect(200)
             .then(({ body }) => {
-              expect(body.article.votes).to.equal(101);
+              expect(body.article.votes).to.equal(110);
+            });
+        });
+        it('PATCH status: 200, it responds with original article object based on article ID without modification if no inc_votes on body', () => {
+          return request
+            .patch('/api/articles/1')
+            .send({ inc_votes: 0 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article.votes).to.equal(100);
+            });
+        });
+        it('PATCH status: 400, it responds with Bad Request message when inc_votes has invalid input ', () => {
+          return request
+            .patch('/api/articles/1')
+            .send({ inc_votes: 'cats' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Bad Request');
+            });
+        });
+        it('PATCH status: 200, it responds with updated article object with updated votes even if other property on request body', () => {
+          return request
+            .patch('/api/articles/1')
+            .send({ inc_votes: 5, name: 'Mitch' })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article.votes).to.equal(105);
             });
         });
         it('DELETE status: 204', () => {
@@ -352,6 +379,14 @@ describe('/', () => {
                 'name',
               );
               expect(body.user.name).to.equal('paul');
+            });
+        });
+        it('NOT FOUND status: 404, responds with error message for username not found in database', () => {
+          return request
+            .get('/api/users/rollypolly')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('User Not Found');
             });
         });
       });
