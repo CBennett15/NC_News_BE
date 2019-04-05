@@ -4,10 +4,11 @@ const { sendTopics, addNewTopic } = require('../controllers/topics');
 const articlesRouter = require('./articles');
 const commentsRouter = require('./comments');
 const usersRouter = require('./users');
+const endpoints = require('../endpoints.json');
 
 apiRouter
   .route('/')
-  .get((req, res) => res.send({ ok: true }))
+  .get((req, res) => res.send({ endpoints }))
   .all(methodNotAllowed);
 
 apiRouter
