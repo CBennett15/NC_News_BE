@@ -30,6 +30,14 @@ describe.only('/', () => {
           expect(body.msg).to.equal('Route Not Found');
         });
     });
+    it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {
+      return request
+        .delete('/api')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('Method Not Allowed');
+        });
+    });
     describe('/topics', () => {
       it('GET status: 200, it responds with an array of topic objects each topic having the right properties', () => {
         return request
@@ -44,10 +52,19 @@ describe.only('/', () => {
       });
       it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
         return request
-          .post('/api/topics')
+          .delete('/api/topics')
           .expect(405)
           .then(({ body }) => {
             expect(body.msg).to.equal('Method Not Allowed');
+          });
+      });
+      it('POST status: 201, it responds with a new topic object ', () => {
+        return request
+          .post('/api/topics')
+          .send({ slug: 'board_games', description: 'This is the life' })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.topic.slug).to.equal('board_games');
           });
       });
     });
@@ -365,6 +382,20 @@ describe.only('/', () => {
                 'name',
               );
               expect(body.users[0].name).to.equal('jonny');
+            });
+        });
+        it('POST status: 201, it responds with a new user object', () => {
+          return request
+            .post('/api/users')
+            .send({
+              username: 'swordnut',
+              name: 'paul',
+              avatar_url:
+                'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4',
+            })
+            .expect(201)
+            .then(({ body }) => {
+              expect(body.user.name).to.equal('paul');
             });
         });
         it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {

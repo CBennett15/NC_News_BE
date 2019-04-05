@@ -1,6 +1,6 @@
 const apiRouter = require('express').Router();
 const { methodNotAllowed } = require('../errors');
-const { sendTopics } = require('../controllers/topics');
+const { sendTopics, addNewTopic } = require('../controllers/topics');
 const articlesRouter = require('./articles');
 const commentsRouter = require('./comments');
 const usersRouter = require('./users');
@@ -13,6 +13,7 @@ apiRouter
 apiRouter
   .route('/topics')
   .get(sendTopics)
+  .post(addNewTopic)
   .all(methodNotAllowed);
 
 apiRouter.use('/articles', articlesRouter);

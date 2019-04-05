@@ -12,3 +12,14 @@ exports.getUsersByUsername = ({ username }) => {
     .where('username', '=', username)
     .returning('*');
 };
+exports.addUser = (req) => {
+  const body = req.body;
+  return connection
+    .insert({
+      username: body.username,
+      name: body.name,
+      avatar_url: body.avatar_url,
+    })
+    .into('users')
+    .returning('*');
+};

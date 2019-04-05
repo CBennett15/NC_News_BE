@@ -1,4 +1,4 @@
-const { getUsersByUsername, getUsers } = require('../models/users');
+const { getUsersByUsername, getUsers, addUser } = require('../models/users');
 
 exports.sendUsers = (req, res, next) => {
   getUsers()
@@ -14,6 +14,14 @@ exports.sendUserByUsername = (req, res, next) => {
       if (!user) {
         return Promise.reject({ status: 404, msg: 'User Not Found' });
       } else res.status(200).send({ user });
+    })
+    .catch(next);
+};
+
+exports.addNewUser = (req, res, next) => {
+  addUser(req)
+    .then(([user]) => {
+      res.status(201).send({ user });
     })
     .catch(next);
 };
