@@ -168,13 +168,22 @@ describe.only('/', () => {
               expect(body.article.comment_count).to.equal('13');
             });
         });
-        it('PATCH status: 200, it responds with one article object based on article ID with modifications', () => {
+        it('PATCH status: 200, it responds with one article object based on article ID with votes incremented', () => {
           return request
             .patch('/api/articles/1')
             .send({ inc_votes: 10 })
             .expect(200)
             .then(({ body }) => {
               expect(body.article.votes).to.equal(110);
+            });
+        });
+        it('PATCH staus: 200, it responds with one article object based on article ID with votes decremented', () => {
+          return request
+            .patch('/api/articles/1')
+            .send({ inc_votes: -5 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.article.votes).to.equal(95);
             });
         });
         it('PATCH status: 200, it responds with original article object based on article ID without modification if no inc_votes on body', () => {
