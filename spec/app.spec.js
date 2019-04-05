@@ -76,6 +76,15 @@ describe.only('/', () => {
             expect(body.msg).to.equal('Unprocessable Entity - already exists');
           });
       });
+      it('POST status: 400, topic does not include a slug', () => {
+        return request
+          .post('/api/topics')
+          .send({ description: 'this is the life' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('No Slug Included');
+          });
+      });
     });
     describe('/articles', () => {
       it('GET status: 200, it responds with an array of article objects, each topic having the right properties', () => {
