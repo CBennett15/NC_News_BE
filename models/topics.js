@@ -1,14 +1,17 @@
 const connection = require('../db/connection');
 
-exports.getTopics = () => {
+exports.getTopics = ({ topic }) => {
   return connection
     .select('*')
     .from('topics')
+    .modify(function(queryBuilder) {
+      if (topic) {
+        queryBuilder.where('slug', topic);
+      }
+    })
     .returning('*');
 };
-exports.getTopicsByTopic = ({ topic }) => {
-  return connection('topics').where('slug', '=', topic);
-};
+
 exports.addTopic = (req) => {
   const body = req.body;
   return connection

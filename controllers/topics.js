@@ -1,19 +1,13 @@
-const { getTopics, addTopic, getTopicsByTopic } = require('../models/topics');
+const { getTopics, addTopic } = require('../models/topics');
 
 exports.sendTopics = (req, res, next) => {
-  getTopics()
+  getTopics(req.query)
     .then((topics) => {
       res.status(200).send({ topics });
     })
     .catch(next);
 };
-exports.sendTopicsByTopic = (req, res, next) => {
-  getTopicsByTopic(req.params)
-    .then(([topic]) => {
-      res.status(200).send({ topic });
-    })
-    .catch(next);
-};
+
 exports.addNewTopic = (req, res, next) => {
   if (!req.body.slug) {
     return Promise.reject({ status: 400, msg: 'No Slug Included' }).catch(next);
