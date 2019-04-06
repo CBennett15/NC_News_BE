@@ -1,7 +1,7 @@
 const { getUsersByUsername, getUsers, addUser } = require('../models/users');
 
 exports.sendUsers = (req, res, next) => {
-  getUsers()
+  getUsers(req.query)
     .then((users) => {
       res.status(200).send({ users });
     })

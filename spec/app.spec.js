@@ -30,7 +30,7 @@ describe.only('/', () => {
           expect(body.endpoints).to.be.an('object');
         });
     });
-    it('GET status 404 for path that does not exist, responds with Route Not Found', () => {
+    it('GET status: 404, responds with Route Note Found for path that does not exist', () => {
       return request
         .get('/api/non-existent-route')
         .expect(404)
@@ -168,7 +168,7 @@ describe.only('/', () => {
             expect(body.msg).to.equal('Method Not Allowed');
           });
       });
-      it('BAD QUERIES status: 400, responds with message Bad Request when user sorts by non-existent column', () => {
+      it('GET BAD QUERIES status: 400, responds with message Bad Request when user sorts by non-existent column', () => {
         return request
           .get('/api/articles?sort_by=cats')
           .expect(400)
@@ -176,7 +176,7 @@ describe.only('/', () => {
             expect(body.msg).to.equal('Bad Request');
           });
       });
-      it('NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author', () => {
+      it('GET NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author', () => {
         return request
           .get('/api/articles?author=not-an-author')
           .expect(404)
@@ -275,7 +275,7 @@ describe.only('/', () => {
               expect(body.msg).to.equal('ID Not Found');
             });
         });
-        it('BAD QUERIES status: 400, responds with message Bad Request when there is an incorrect format article ID', () => {
+        it('GET BAD QUERIES status: 400, responds with message Bad Request when there is an incorrect format article ID', () => {
           return request
             .get('/api/articles/cats')
             .expect(400)
@@ -283,7 +283,7 @@ describe.only('/', () => {
               expect(body.msg).to.equal('Bad Request');
             });
         });
-        it("NOT FOUND status: 404, responds with message Route Not Found when there a valid id but it doesn't exist", () => {
+        it("GET NOT FOUND status: 404, responds with message Route Not Found when there a valid id but it doesn't exist", () => {
           return request
             .get('/api/articles/99999')
             .expect(404)
@@ -384,7 +384,7 @@ describe.only('/', () => {
                 expect(body.msg).to.equal('Method Not Allowed');
               });
           });
-          it("NOT FOUND status: 404, responds with message Not Found when there is a valid id but article doesn't exist", () => {
+          it("GET NOT FOUND status: 404, responds with message Not Found when there is a valid id but article doesn't exist", () => {
             return request
               .get('/api/articles/1000/comments')
               .expect(404)
@@ -549,7 +549,7 @@ describe.only('/', () => {
               expect(body.user.name).to.equal('paul');
             });
         });
-        it('NOT FOUND status: 404, responds with error message for username not found in database', () => {
+        it('GET NOT FOUND status: 404, responds with error message for username not found in database', () => {
           return request
             .get('/api/users/rollypolly')
             .expect(404)

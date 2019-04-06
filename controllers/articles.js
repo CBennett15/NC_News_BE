@@ -6,7 +6,7 @@ const {
   getCommentsByArticle,
   addComment,
 } = require('../models/articles');
-const { getUsersByUsername } = require('../models/users');
+const { getUsers } = require('../models/users');
 const { getTopics } = require('../models/topics');
 
 exports.sendArticles = (req, res, next) => {
@@ -15,10 +15,17 @@ exports.sendArticles = (req, res, next) => {
   //     res.status(200).send({ articles });
   //   })
   //   .catch(next);
-  return Promise.all([getTopics(req.query), getArticles(req.query)])
-    .then(([topics, articles]) => {
+  const username = req.query.author;
+  return Promise.all([
+    getTopics(req.query),
+    getUsers({ username }),
+    getArticles(req.query),
+  ])
+    .then(([topics, users, articles]) => {
       if (!topics.length) {
         return Promise.reject({ status: 404, msg: 'Topic Not Found' });
+      } else if (!users.length) {
+        return Promise.reject({ status: 404, msg: 'Author Not Found' });
       } else res.status(200).send({ articles });
     })
     .catch(next);
