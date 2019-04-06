@@ -14,7 +14,7 @@ exports.updateComment = (req) => {
     .select('*')
     .from('comments')
     .where('comment_id', '=', id)
-    .increment('votes', inc_votes)
+    .increment('votes', inc_votes || 0)
     .returning('*');
 };
 

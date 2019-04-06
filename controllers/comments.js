@@ -15,7 +15,9 @@ exports.sendComments = (req, res, next) => {
 exports.updateCommentsById = (req, res, next) => {
   updateComment(req)
     .then(([comment]) => {
-      res.status(200).send({ comment });
+      if (!comment) {
+        return Promise.reject({ status: 404, msg: 'Comment Not Found' });
+      } else res.status(200).send({ comment });
     })
     .catch(next);
 };

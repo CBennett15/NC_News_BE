@@ -18,11 +18,13 @@ articlesRouter
   .route('/:articles_id')
   .get(sendArticlesById)
   .patch(updateArticlesById)
-  .delete(deleteArticlesByID);
+  .delete(deleteArticlesByID)
+  .all(methodNotAllowed);
 
 articlesRouter
   .route('/:articles_id/comments')
   .get(sendCommentsByArticle)
-  .post(addCommentToArticle);
+  .post(addCommentToArticle)
+  .all(methodNotAllowed);
 
 module.exports = articlesRouter;

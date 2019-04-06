@@ -53,11 +53,19 @@ exports.deleteArticlesByID = (req, res, next) => {
 exports.sendCommentsByArticle = (req, res, next) => {
   getCommentsByArticle(req)
     .then((comments) => {
-      res.status(200).send({ comments });
+      if (!comments.length) {
+        return Promise.reject({ status: 404, msg: 'Article Not Found' });
+      } else res.status(200).send({ comments });
     })
     .catch(next);
 };
 exports.addCommentToArticle = (req, res, next) => {
+  if (!req.body.username || !req.body.body) {
+    return Promise.reject({
+      status: 400,
+      msg: 'Not included all required keys',
+    }).catch(next);
+  }
   addComment(req)
     .then(([comment]) => {
       res.status(201).send({ comment });

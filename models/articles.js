@@ -2,7 +2,7 @@ const connection = require('../db/connection');
 
 exports.getArticles = ({ author, topic, sort_by, order_by }) => {
   return connection
-    .select('articles.*', 'comments.article_id')
+    .select('articles.*')
     .from('articles')
     .count({ comment_count: 'comments.article_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
@@ -23,7 +23,7 @@ exports.getArticles = ({ author, topic, sort_by, order_by }) => {
 
 exports.getArticlesById = ({ articles_id }) => {
   return connection
-    .select('articles.*', 'comments.article_id')
+    .select('articles.*')
     .from('articles')
     .where('articles.article_id', '=', articles_id)
     .count({ comment_count: 'comments.article_id' })
@@ -39,7 +39,7 @@ exports.updateArticle = (req) => {
     .select('*')
     .from('articles')
     .where('article_id', '=', id)
-    .increment('votes', inc_votes)
+    .increment('votes', inc_votes || 0)
     .returning('*');
 };
 

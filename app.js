@@ -6,11 +6,17 @@ const {
   badRequest,
   customErrors,
   handle422,
+  methodNotAllowed,
 } = require('./errors');
 
 const app = express();
 
 app.use(express.json());
+
+app
+  .route('/')
+  .get((req, res) => res.send({ ok: true }))
+  .all(methodNotAllowed);
 
 app.use('/api', apiRouter);
 

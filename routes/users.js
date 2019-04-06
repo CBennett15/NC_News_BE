@@ -12,6 +12,9 @@ usersRouter
   .post(addNewUser)
   .all(methodNotAllowed);
 
-usersRouter.route('/:username').get(sendUserByUsername);
+usersRouter
+  .route('/:username')
+  .get(sendUserByUsername)
+  .all(methodNotAllowed);
 
 module.exports = usersRouter;

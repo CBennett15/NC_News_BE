@@ -13,13 +13,21 @@ describe.only('/', () => {
     return connection.seed.run();
   });
   after(() => connection.destroy());
+  it('GET status: 200', () => {
+    return request
+      .get('/')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.ok).to.equal(true);
+      });
+  });
   describe('/api', () => {
     it('GET status:200', () => {
       return request
         .get('/api')
         .expect(200)
         .then(({ body }) => {
-          expect(body.ok).to.equal(true);
+          expect(body.endpoints).to.be.an('object');
         });
     });
     it('GET status 404 for path that does not exist, responds with Route Not Found', () => {
@@ -224,7 +232,7 @@ describe.only('/', () => {
         it('PATCH status: 200, it responds with original article object based on article ID without modification if no inc_votes on body', () => {
           return request
             .patch('/api/articles/1')
-            .send({ inc_votes: 0 })
+            .send({})
             .expect(200)
             .then(({ body }) => {
               expect(body.article.votes).to.equal(100);
@@ -273,6 +281,14 @@ describe.only('/', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.equal('Article Not Found');
+            });
+        });
+        it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {
+          return request
+            .put('/api/articles/999')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Method Not Allowed');
             });
         });
 
@@ -334,6 +350,40 @@ describe.only('/', () => {
                 expect(body.comment.author).to.equal('butter_bridge');
               });
           });
+          it('POST status: 400, responds with a Bad Request when post request is empty object', () => {
+            return request
+              .post('/api/articles/1/comments')
+              .send()
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal('Not included all required keys');
+              });
+          });
+          it('POST status: 400, responds with a Bad Request when post request does not include all required keys', () => {
+            return request
+              .post('/api/articles/1/comments')
+              .send({ username: 'wulfwyn' })
+              .expect(400)
+              .then(({ body }) => {
+                expect(body.msg).to.equal('Not included all required keys');
+              });
+          });
+          it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {
+            return request
+              .put('/api/articles/1/comments')
+              .expect(405)
+              .then(({ body }) => {
+                expect(body.msg).to.equal('Method Not Allowed');
+              });
+          });
+          it("NOT FOUND status: 404, responds with message Not Found when there is a valid id but article doesn't exist", () => {
+            return request
+              .get('/api/articles/1000/comments')
+              .expect(404)
+              .then(({ body }) => {
+                expect(body.msg).to.equal('Article Not Found');
+              });
+          });
         });
       });
     });
@@ -355,14 +405,66 @@ describe.only('/', () => {
             expect(body.comments[0].comment_id).to.equal(1);
           });
       });
+      it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {
+        return request
+          .put('/api/comments')
+          .expect(405)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Method Not Allowed');
+          });
+      });
       describe('/comments/:comment_id', () => {
-        it('PATCH status: 200, it responds with one comment object based on comment ID with modifications', () => {
+        it('PATCH status: 200, it responds with one comment object based on comment ID with votes incremented', () => {
           return request
             .patch('/api/comments/1')
             .send({ inc_votes: 1 })
             .expect(200)
             .then(({ body }) => {
               expect(body.comment.votes).to.equal(17);
+            });
+        });
+        it('PATCH staus: 200, it responds with one comment object based on article ID with votes decremented', () => {
+          return request
+            .patch('/api/comments/1')
+            .send({ inc_votes: -5 })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comment.votes).to.equal(11);
+            });
+        });
+        it('PATCH status: 200, it responds with original article object based on article ID without modification if no inc_votes on body', () => {
+          return request
+            .patch('/api/comments/1')
+            .send({})
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comment.votes).to.equal(16);
+            });
+        });
+        it('PATCH status: 400, it responds with Bad Request message when inc_votes has invalid input ', () => {
+          return request
+            .patch('/api/comments/1')
+            .send({ inc_votes: 'cats' })
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Bad Request');
+            });
+        });
+        it('PATCH status: 200, it responds with updated comment object with updated votes even if other property on request body', () => {
+          return request
+            .patch('/api/comments/1')
+            .send({ inc_votes: 5, name: 'Mitch' })
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comment.votes).to.equal(21);
+            });
+        });
+        it("PATCH status: 404, responds with message Not Found when there is a valid id but comment doesn't exist", () => {
+          return request
+            .patch('/api/comments/1000')
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Comment Not Found');
             });
         });
         it('DELETE status: 204', () => {
@@ -445,6 +547,14 @@ describe.only('/', () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).to.equal('User Not Found');
+            });
+        });
+        it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {
+          return request
+            .put('/api/users/jerry')
+            .expect(405)
+            .then(({ body }) => {
+              expect(body.msg).to.equal('Method Not Allowed');
             });
         });
       });
