@@ -93,6 +93,11 @@ describe.only('/', () => {
             expect(body.msg).to.equal('No Slug Included');
           });
       });
+      describe('/topics:topic', () => {
+        it('GET status: 200, responds with a topic object based on topic', () => {
+          return request.get('/api/topics/cats').expect(200);
+        });
+      });
     });
     describe('/articles', () => {
       it('GET status: 200, it responds with an array of article objects, each topic having the right properties', () => {
@@ -176,12 +181,20 @@ describe.only('/', () => {
             expect(body.msg).to.equal('Bad Request');
           });
       });
-      xit('NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author or topic', () => {
+      xit('NOT FOUND status: 404, responds with message Not Found when user filters by non-existent author', () => {
         return request
-          .get('/api/articles?author=mr_potato_head')
+          .get('/api/articles?author=not-an-author')
           .expect(404)
           .then(({ body }) => {
             expect(body.msg).to.equal('Author Not Found');
+          });
+      });
+      xit('GET NOT FOUND status: 404, responds with message Not Found when user filters by non-existent topic', () => {
+        return request
+          .get('/api/articles?topic=not-a-topic')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('Topic Not Found');
           });
       });
       it('GET status: 200, it responds with an empty array when user filters by author/topic that does exist but has no articles associated with it ', () => {

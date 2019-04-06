@@ -6,6 +6,9 @@ exports.getTopics = () => {
     .from('topics')
     .returning('*');
 };
+exports.getTopicsByTopic = ({ topic }) => {
+  return connection('topics').where('slug', '=', topic);
+};
 exports.addTopic = (req) => {
   const body = req.body;
   return connection

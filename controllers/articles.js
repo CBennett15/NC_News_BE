@@ -6,23 +6,32 @@ const {
   getCommentsByArticle,
   addComment,
 } = require('../models/articles');
-const { getUsers } = require('../models/users');
+const { getUsersByUsername } = require('../models/users');
+const { getTopicsByTopic } = require('../models/topics');
 
 exports.sendArticles = (req, res, next) => {
-  // const username = req.query.author;
-  // Promise.all([getArticles(req.query), getUsers({ username })])
-  //   .then(([articles, users]) => {
-  //     console.log(users);
-  //     if (!users.length) {
-  //       return Promise.reject({ status: 404, msg: 'Author Not Found' });
-  //     } else res.status(200).send({ articles });
-  //   })
-  //   .catch(next);
   getArticles(req.query)
     .then((articles) => {
       res.status(200).send({ articles });
     })
     .catch(next);
+  // const topic = req.params;
+  // const username = req.query.author;
+  // const topics = req.query.topic;
+  // console.log(topics);
+  // Promise.all([
+  //   getTopicsByTopic(topics),
+  //   getUsersByUsername(username),
+  //   getArticles(req.query),
+  // ])
+  //   .then((topic, user, articles) => {
+  //     if (!topic) {
+  //       return Promise.reject({ status: 404, msg: 'Topic Not Found' });
+  //     } else if (!user) {
+  //       return Promise.reject({ status: 404, msg: 'Author Not Found' });
+  //     } else res.status(200).send({ articles });
+  //   })
+  //   .catch(next);
 };
 
 exports.sendArticlesById = (req, res, next) => {
