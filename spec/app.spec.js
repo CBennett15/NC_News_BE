@@ -149,15 +149,29 @@ describe.only('/', () => {
             expect(body.articles[0].topic).to.equal('mitch');
           });
       });
-      it('GET status: 200, user can order results by ascending or descending, with defualt set to desc', () => {
+      it('GET status: 200, user can order results by ascending or descending, with default set to desc', () => {
         return request
-          .get('/api/articles?order_by=asc')
+          .get('/api/articles?order=asc')
           .expect(200)
           .then(({ body }) => {
             expect(body.articles[0].title).to.equal('Moustache');
-            expect(body.articles[body.articles.length - 1].title).to.equal(
-              'Living in the shadow of a great man',
-            );
+          });
+      });
+      it('GET status: 200, user can limit the number of responses on the page with default set to 10', () => {
+        return request
+          .get('/api/articles?limit=10')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.articles.length).to.equal(10);
+          });
+      });
+      xit('GET status: 200, repsonses can be filtered out by page', () => {
+        return request
+          .get('/api/articles?p=2')
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body);
+            expect(body.articles.length).to.equal(2);
           });
       });
       it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
@@ -219,6 +233,7 @@ describe.only('/', () => {
               expect(body.article.comment_count).to.equal('13');
             });
         });
+
         it('PATCH status: 200, it responds with one article object based on article ID with votes incremented', () => {
           return request
             .patch('/api/articles/1')
@@ -329,7 +344,7 @@ describe.only('/', () => {
           });
           it('GET status: 200, user can order comments by ascending or descending, default is desc', () => {
             return request
-              .get('/api/articles/1/comments?order_by=desc')
+              .get('/api/articles/1/comments?order=desc')
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments[0].author).to.equal('butter_bridge');

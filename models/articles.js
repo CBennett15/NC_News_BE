@@ -1,13 +1,15 @@
 const connection = require('../db/connection');
 
-exports.getArticles = ({ author, topic, sort_by, order_by }) => {
+exports.getArticles = ({ author, topic, sort_by, order, limit, p }) => {
   return connection
     .select('articles.*')
     .from('articles')
     .count({ comment_count: 'comments.article_id' })
     .leftJoin('comments', 'articles.article_id', 'comments.article_id')
     .groupBy('comments.article_id', 'articles.article_id')
-    .orderBy(sort_by || 'created_at', order_by || 'desc')
+    .orderBy(sort_by || 'created_at', order || 'desc')
+    .limit(limit || 10)
+    .offset(limit * p - limit)
     .modify(function(queryBuilder) {
       if (author) {
         queryBuilder.where('articles.author', author);
@@ -53,13 +55,13 @@ exports.deleteArticle = ({ articles_id }) => {
 exports.getCommentsByArticle = (req) => {
   const id = req.params.articles_id;
   const sort_by = req.query.sort_by;
-  const order_by = req.query.order_by;
+  const order = req.query.order;
   return connection
-    .select('comments.*', 'articles.article_id')
+    .select('comments.*')
     .from('comments')
     .where('articles.article_id', '=', id)
     .leftJoin('articles', 'comments.article_id', 'articles.article_id')
-    .orderBy(sort_by || 'created_at', order_by || 'desc');
+    .orderBy(sort_by || 'created_at', order || 'desc');
 };
 
 exports.addComment = (req) => {
