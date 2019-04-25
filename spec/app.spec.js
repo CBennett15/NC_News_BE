@@ -428,6 +428,15 @@ describe.only('/', () => {
             expect(body.comments[0].comment_id).to.equal(1);
           });
       });
+      it('GET status: 200, user can filter by author and return all comments associated with that username', () => {
+        return request
+          .get('/api/comments?author=icellusedkars')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).to.equal(13);
+            expect(body.comments[0].comment_id).to.equal(3);
+          });
+      });
       it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {
         return request
           .put('/api/comments')

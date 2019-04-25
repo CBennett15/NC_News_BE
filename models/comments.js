@@ -1,9 +1,14 @@
 const connection = require('../db/connection');
 
-exports.getComments = () => {
+exports.getComments = ({ author }) => {
   return connection
     .select('*')
     .from('comments')
+    .modify(function(queryBuilder) {
+      if (author) {
+        queryBuilder.where('author', author);
+      }
+    })
     .returning('*');
 };
 

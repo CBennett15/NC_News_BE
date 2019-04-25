@@ -5,10 +5,16 @@ const {
 } = require('../models/comments');
 
 exports.sendComments = (req, res, next) => {
-  getComments()
+  getComments(req.query)
     .then((comments) => {
-      res.status(200).send({ comments });
+      if (!comments.length) {
+        return Promise.reject({
+          status: 404,
+          msg: 'No Comments by this author Found',
+        });
+      } else res.status(200).send({ comments });
     })
+
     .catch(next);
 };
 
