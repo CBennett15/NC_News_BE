@@ -77,3 +77,16 @@ exports.addComment = (req) => {
     .into('comments')
     .returning('*');
 };
+exports.addArticle = (req) => {
+  const body = req.body;
+  return connection
+    .insert({
+      title: body.title,
+      created_at: new Date(),
+      body: body.body,
+      author: body.author,
+      topic: body.topic,
+    })
+    .into('articles')
+    .returning('*');
+};

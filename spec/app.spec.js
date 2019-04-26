@@ -213,6 +213,29 @@ describe.only('/', () => {
             expect(body.articles.length).to.equal(0);
           });
       });
+      it('POST status 201, responds with an article object', () => {
+        return request
+          .post('/api/articles')
+          .send({
+            title: 'Doing a Project in a Week',
+            body: 'It is really hard to do a project in a week',
+            author: 'butter_bridge',
+            topic: 'cats',
+          })
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.article).to.contain.keys(
+              'article_id',
+              'author',
+              'title',
+              'topic',
+              'votes',
+              'created_at',
+              'body',
+            );
+            expect(body.article.author).to.equal('butter_bridge');
+          });
+      });
       describe('/articles/:article_id', () => {
         it('GET status: 200, it responds with one article object based on article ID', () => {
           return request

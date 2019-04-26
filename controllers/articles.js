@@ -5,6 +5,7 @@ const {
   deleteArticle,
   getCommentsByArticle,
   addComment,
+  addArticle,
 } = require('../models/articles');
 const { getUsers } = require('../models/users');
 const { getTopics } = require('../models/topics');
@@ -75,6 +76,21 @@ exports.addCommentToArticle = (req, res, next) => {
   addComment(req)
     .then(([comment]) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+exports.addNewArticle = (req, res, next) => {
+  // if (!req.body.title || !req.body.body || !req.body.author) {
+  //   return Promise.reject({
+  //     status: 400,
+  //     msg: 'Not filled in all fields',
+  //   }).catch(next);
+  // }
+  console.log(req.body);
+  addArticle(req)
+    .then(([article]) => {
+      console.log(article);
+      res.status(201).send({ article });
     })
     .catch(next);
 };
