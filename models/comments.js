@@ -1,9 +1,10 @@
 const connection = require('../db/connection');
 
-exports.getComments = ({ author }) => {
+exports.getComments = ({ author, sort_by, order }) => {
   return connection
     .select('*')
     .from('comments')
+    .orderBy(sort_by || 'created_at', order || 'desc')
     .modify(function(queryBuilder) {
       if (author) {
         queryBuilder.where('author', author);

@@ -165,13 +165,12 @@ describe.only('/', () => {
             expect(body.articles.length).to.equal(10);
           });
       });
-      xit('GET status: 200, repsonses can be filtered out by page', () => {
+      it('GET status: 200, repsonses can be filtered out by page', () => {
         return request
           .get('/api/articles?p=2')
           .expect(200)
           .then(({ body }) => {
-            console.log(body);
-            expect(body.articles.length).to.equal(2);
+            expect(body.articles[0].body).to.equal('some gifs');
           });
       });
       it('INVALID METHOD status: 405, responds with message Method Not Allowed', () => {
@@ -435,6 +434,22 @@ describe.only('/', () => {
           .then(({ body }) => {
             expect(body.comments.length).to.equal(13);
             expect(body.comments[0].comment_id).to.equal(3);
+          });
+      });
+      it('GET status: 200, user can sort the comments by a specific column with default set to Date', () => {
+        return request
+          .get('/api/comments?sort_by=author')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments[0].author).to.equal('icellusedkars');
+          });
+      });
+      it('GET status: 200, user can order results by ascending or descending, with default set to desc', () => {
+        return request
+          .get('/api/comments?order=asc')
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments[0].votes).to.equal(16);
           });
       });
       it('INVALID METHOD status: 405, responds with message Method Not Allowed when invalid http request', () => {

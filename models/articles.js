@@ -9,7 +9,7 @@ exports.getArticles = ({ author, topic, sort_by, order, limit, p }) => {
     .groupBy('comments.article_id', 'articles.article_id')
     .orderBy(sort_by || 'created_at', order || 'desc')
     .limit(limit || 10)
-    .offset(limit * p - limit)
+    .offset(p || 0)
     .modify(function(queryBuilder) {
       if (author) {
         queryBuilder.where('articles.author', author);
