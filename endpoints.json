@@ -43,6 +43,22 @@
         ]
       }
     },
+    "POST /api/articles": {
+      "description": "serves an object of a new article",
+      "queries": [],
+      "exampleResponse": {
+        "article": [
+          {
+            "title": "Seafood substitutions are increasing",
+            "topic": "cooking",
+            "author": "weegembump",
+            "body": "Text from the article..",
+            "created_at": 1527695953341,
+            "comment_count": 0
+          }
+        ]
+      }
+    },
     "GET /api/articles/:article_id": {
       "description": "serves an object of one article based on aricle ID",
       "queries": [],
