@@ -80,16 +80,8 @@ exports.addCommentToArticle = (req, res, next) => {
     .catch(next);
 };
 exports.addNewArticle = (req, res, next) => {
-  // if (!req.body.title || !req.body.body || !req.body.author) {
-  //   return Promise.reject({
-  //     status: 400,
-  //     msg: 'Not filled in all fields',
-  //   }).catch(next);
-  // }
-  console.log(req.body);
   addArticle(req)
     .then(([article]) => {
-      console.log(article);
       res.status(201).send({ article });
     })
     .catch(next);
