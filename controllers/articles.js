@@ -11,11 +11,6 @@ const { getUsers } = require('../models/users');
 const { getTopics } = require('../models/topics');
 
 exports.sendArticles = (req, res, next) => {
-  // getArticles(req.query)
-  //   .then((articles) => {
-  //     res.status(200).send({ articles });
-  //   })
-  //   .catch(next);
   const username = req.query.author;
   return Promise.all([
     getTopics(req.query),
